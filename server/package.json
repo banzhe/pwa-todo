@@ -5,7 +5,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "bun --watch run src/index.ts"
+    "dev": "bun --watch run src/index.ts",
+    "migrate": "drizzle-kit migrate",
+    "generate": "drizzle-kit generate"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.0",
