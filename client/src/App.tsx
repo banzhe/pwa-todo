@@ -10,7 +10,16 @@ function App() {
 
   async function sendRequest() {
     try {
-      const req = await fetch(`${SERVER_URL}/hello`)
+      const req = await fetch(`${SERVER_URL}/api/tasks/create_task`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: 'Test Task',
+          content: 'Test Content',
+        }),
+      })
       const res: ApiResponse = await req.json()
       setData(res)
     } catch (error) {

@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import type { ApiResponse } from 'shared/dist'
 import 'dotenv/config'
 import { drizzle } from 'drizzle-orm/libsql'
-import type { Env } from './types'
+import tasks from './api/tasks'
+import type { Env, HonoTypeWithEnv } from './types'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -21,13 +21,9 @@ app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
 
-app.get('/hello', async (c) => {
-  const data: ApiResponse = {
-    message: 'Hello BHVR!',
-    success: true,
-  }
+const api = new Hono<HonoTypeWithEnv>()
 
-  return c.json(data, { status: 200 })
-})
+api.route('/tasks', tasks)
+app.route('/api', api)
 
 export default app
