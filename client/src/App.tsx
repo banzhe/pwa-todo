@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import type { ApiResponse } from 'shared'
 import beaver from './assets/beaver.svg'
-import './App.css'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000'
 

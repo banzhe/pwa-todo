@@ -1,6 +1,6 @@
 import type { Context } from 'hono'
 
-export function successResponse<T = unknown>(c: Context, data: T): Response {
+export function successResponse<T = unknown>(c: Context, data?: T): Response {
   return c.json({
     message: 'Success',
     success: true,

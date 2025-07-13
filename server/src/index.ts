@@ -11,7 +11,6 @@ app.use('*', async (c, next) => {
   // biome-ignore lint/style/noNonNullAssertion: config in .env
   const db = drizzle(process.env.DB_FILE_NAME!)
   c.env.DB = db
-  console.log('DB set')
   await next()
 })
 

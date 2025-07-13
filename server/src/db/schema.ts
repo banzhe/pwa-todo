@@ -17,4 +17,5 @@ export const taskTable = sqliteTable('tasks', {
   priority: integer('priority').notNull().default(0),
   startDate: integer('start_date', { mode: 'timestamp' }),
   endDate: integer('end_date', { mode: 'timestamp' }),
+  sort: integer('sort').notNull().default(0),
 })
