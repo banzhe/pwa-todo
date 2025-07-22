@@ -1,9 +1,10 @@
 import type { Task } from 'shared'
 import fetcher from '../utils/fetcher'
 
-export async function getAllTasks() {
+export async function getAllTasks(options: { filterDate?: Date } = {}) {
   return fetcher<Task[]>('/tasks/get_tasks', {
-    method: 'GET',
+    method: 'POST',
+    body: options,
   })
 }
 

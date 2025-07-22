@@ -62,7 +62,7 @@ export default function TaskList({
       onContextMenu={(e) => {
         e.preventDefault()
       }}
-      className="flex-1 h-[800px] p-4 pt-0"
+      className="h-[calc(100%-45px)] pr-[12px] mr-[-12px]"
     >
       <Accordion
         type="multiple"

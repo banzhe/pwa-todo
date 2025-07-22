@@ -20,7 +20,7 @@ export default function QuickCreateTaskInput({
   }
 
   return (
-    <div className="px-4 pt-4">
+    <div>
       <Input
         type="text"
         placeholder="Add a task"

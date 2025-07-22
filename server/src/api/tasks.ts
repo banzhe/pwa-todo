@@ -2,7 +2,7 @@ import { zValidator } from '@hono/zod-validator'
 import { taskTable } from '@server/db/schema'
 import type { HonoTypeWithEnv } from '@server/types'
 import { successResponse } from '@server/utils/response'
-import { asc, eq } from 'drizzle-orm'
+import { asc, eq, lte } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -48,11 +48,33 @@ app.post(
   },
 )
 
-app.get('/get_tasks', async (c) => {
-  const db = c.env.DB
-  const tasks = await db.select().from(taskTable).orderBy(asc(taskTable.sort))
-  return successResponse(c, tasks)
-})
+app.post(
+  '/get_tasks',
+  zValidator(
+    'json',
+    z.object({
+      filterDate: z
+        .string()
+        .optional()
+        .transform((val) => {
+          if (!val) return undefined
+          const date = new Date(val)
+          date.setHours(23, 59, 59, 999)
+          return date
+        }),
+    }),
+  ),
+  async (c) => {
+    const { filterDate } = c.req.valid('json')
+    const db = c.env.DB
+    const tasks = await db
+      .select()
+      .from(taskTable)
+      .where(filterDate ? lte(taskTable.endDate, filterDate) : undefined)
+      .orderBy(asc(taskTable.sort))
+    return successResponse(c, tasks)
+  },
+)
 
 app.post(
   '/update_task',

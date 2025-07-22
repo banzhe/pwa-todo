@@ -14,4 +14,6 @@ export type Task = {
   createdAt: Date
   updatedAt: Date
   sort: number
+  startDate?: Date
+  endDate?: Date
 }

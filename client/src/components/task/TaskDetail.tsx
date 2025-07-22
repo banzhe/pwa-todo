@@ -9,7 +9,7 @@ import { Textarea } from '../ui/textarea'
 
 interface TaskDetailProps {
   task: Task
-  onTaskUpdated?: (task: Task) => void
+  onTaskUpdated: (task: Task) => void
 }
 
 export default function TaskDetail({ task, onTaskUpdated }: TaskDetailProps) {
@@ -28,14 +28,14 @@ export default function TaskDetail({ task, onTaskUpdated }: TaskDetailProps) {
     const newTaskItem = { ...taskItem, title: e.target.value }
     setTaskItem(newTaskItem)
     doUpdateTask(newTaskItem)
-    onTaskUpdated?.(newTaskItem)
+    onTaskUpdated(newTaskItem)
   }
 
   function handleContentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const newTaskItem = { ...taskItem, content: e.target.value }
     setTaskItem(newTaskItem)
     doUpdateTask(newTaskItem)
-    onTaskUpdated?.(newTaskItem)
+    onTaskUpdated(newTaskItem)
   }
 
   function handleStatusChange(checked: boolean) {
@@ -45,11 +45,11 @@ export default function TaskDetail({ task, onTaskUpdated }: TaskDetailProps) {
     }
     setTaskItem(newTaskItem)
     doUpdateTask(newTaskItem)
-    onTaskUpdated?.(newTaskItem)
+    onTaskUpdated(newTaskItem)
   }
 
   return (
-    <div className="flex flex-col m-4 p-4 border rounded-md w-xl overflow-auto box-border">
+    <div className="flex flex-col p-4">
       <div className="flex items-center">
         <Checkbox
           checked={taskItem.status === TaskStatus.COMPLETED}

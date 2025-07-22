@@ -9,9 +9,9 @@ import TaskContextMenu from './TaskContextMenu'
 interface TaskItemProps {
   task: Task
   isSelected: boolean
-  onTaskSelected?: (taskId: number) => void
-  onTaskDeleted?: (taskId: number) => void
-  onTaskUpdated?: (task: Task) => void
+  onTaskSelected: (taskId: number) => void
+  onTaskDeleted: (taskId: number) => void
+  onTaskUpdated: (task: Task) => void
 }
 
 export default function TaskItem({
@@ -30,12 +30,12 @@ export default function TaskItem({
   const { run: doDeleteTask } = useRequest(deleteTask, {
     manual: true,
     onSuccess: () => {
-      onTaskDeleted?.(task.id)
+      onTaskDeleted(task.id)
     },
   })
 
   function handleClick() {
-    onTaskSelected?.(task.id)
+    onTaskSelected(task.id)
   }
 
   async function handleCheckedChange(checked: boolean) {
@@ -43,7 +43,7 @@ export default function TaskItem({
       id: task.id,
       status: checked ? TaskStatus.COMPLETED : TaskStatus.IN_PROGRESS,
     })
-    onTaskUpdated?.({
+    onTaskUpdated({
       ...task,
       status: checked ? TaskStatus.COMPLETED : TaskStatus.IN_PROGRESS,
     })
@@ -59,10 +59,15 @@ export default function TaskItem({
       id: task.id,
       status: TaskStatus.CANCELLED,
     })
-    onTaskUpdated?.({
+    onTaskUpdated({
       ...task,
       status: TaskStatus.CANCELLED,
     })
+  }
+
+  function handleUpdate(task: Task) {
+    doUpdateTask(task)
+    onTaskUpdated(task)
   }
 
   return (
@@ -70,6 +75,7 @@ export default function TaskItem({
       task={task}
       onDelete={handleDelete}
       onAbandon={handleAbandon}
+      onUpdate={handleUpdate}
     >
       <div
         className={cn(
