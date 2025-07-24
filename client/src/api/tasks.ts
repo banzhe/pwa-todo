@@ -5,6 +5,15 @@ export async function getAllTasks(options: { filterDate?: Date } = {}) {
   return fetcher<Task[]>('/tasks/get_tasks', {
     method: 'POST',
     body: options,
+  }).then((res) => {
+    return res?.map(
+      (task) =>
+        ({
+          ...task,
+          startDate: task.startDate ? new Date(task.startDate) : undefined,
+          endDate: task.endDate ? new Date(task.endDate) : undefined,
+        }) as Task,
+    )
   })
 }
 

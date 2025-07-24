@@ -1,8 +1,10 @@
 import { useRequest } from 'ahooks'
+import { CalendarArrowDown, CalendarArrowUp } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { type Task, TaskStatus } from 'shared'
 import { updateTask } from '@/api/tasks'
 import { cn } from '@/lib/utils'
+import DatePicker from '../DatePicker'
 import { Checkbox } from '../ui/checkbox'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
@@ -49,7 +51,7 @@ export default function TaskDetail({ task, onTaskUpdated }: TaskDetailProps) {
   }
 
   return (
-    <div className="flex flex-col p-4">
+    <div className="flex flex-col p-4 h-full">
       <div className="flex items-center">
         <Checkbox
           checked={taskItem.status === TaskStatus.COMPLETED}
@@ -68,6 +70,32 @@ export default function TaskDetail({ task, onTaskUpdated }: TaskDetailProps) {
           value={taskItem.title}
           onChange={handleTitleChange}
         />
+      </div>
+
+      <div className="flex gap-2 mt-2 text-sm items-center">
+        <div className="flex items-center gap-2">
+          <DatePicker
+            icon={<CalendarArrowUp className="w-4 h-4" />}
+            date={taskItem.startDate}
+            setDate={(date) => {
+              setTaskItem({ ...taskItem, startDate: date })
+              doUpdateTask({ ...taskItem, startDate: date })
+            }}
+            endThreshold={taskItem.endDate}
+          />
+        </div>
+        <div>-</div>
+        <div className="flex items-center gap-2">
+          <DatePicker
+            icon={<CalendarArrowDown className="w-4 h-4" />}
+            date={taskItem.endDate}
+            setDate={(date) => {
+              setTaskItem({ ...taskItem, endDate: date })
+              doUpdateTask({ ...taskItem, endDate: date })
+            }}
+            startThreshold={taskItem.startDate}
+          />
+        </div>
       </div>
 
       <Textarea
