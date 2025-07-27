@@ -1,5 +1,6 @@
 import type { Task } from 'shared'
 import { TaskStatus } from 'shared'
+import { useTaskContext } from '@/context/TaskContext'
 import {
   Accordion,
   AccordionContent,
@@ -9,21 +10,8 @@ import {
 import { ScrollArea } from '../ui/scroll-area'
 import TaskItem from './TaskItem'
 
-interface TaskListProps {
-  tasks: Task[]
-  selectedTaskId?: number
-  onTaskSelected: (taskId: number) => void
-  onTaskDeleted: (taskId: number) => void
-  onTaskUpdated: (task: Task) => void
-}
-
-export default function TaskList({
-  tasks,
-  selectedTaskId,
-  onTaskSelected,
-  onTaskDeleted,
-  onTaskUpdated,
-}: TaskListProps) {
+export default function TaskList() {
+  const { tasks } = useTaskContext()
   // 根据状态分组任务
   const inProgressTasks = tasks.filter(
     (task) => task.status === TaskStatus.IN_PROGRESS,
@@ -43,14 +31,7 @@ export default function TaskList({
       <AccordionContent>
         <div className="flex flex-col gap-2 ">
           {taskList.map((task) => (
-            <TaskItem
-              key={task.id}
-              task={task}
-              isSelected={selectedTaskId === task.id}
-              onTaskSelected={onTaskSelected}
-              onTaskDeleted={onTaskDeleted}
-              onTaskUpdated={onTaskUpdated}
-            />
+            <TaskItem key={task.id} task={task} />
           ))}
         </div>
       </AccordionContent>

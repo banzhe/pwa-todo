@@ -1,5 +1,5 @@
 import { Calendar1 } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { Calendar } from '@/components/ui/calendar'
 import {
   ContextMenuSub,
@@ -22,10 +22,6 @@ export function SelectDateButtonSubMenu({
   endThreshold,
   startThreshold,
 }: SelectDateButtonProps) {
-  const [date, setDate] = useState<Date | undefined>(
-    value ? new Date(value) : undefined,
-  )
-
   function formatDate(date: Date) {
     return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`
   }
@@ -54,9 +50,9 @@ export function SelectDateButtonSubMenu({
             <Calendar1 className="h-4 w-4 mr-2" />
             {label}
           </div>
-          {date && (
+          {value && (
             <div className="text-muted-foreground justify-center flex items-center text-sm">
-              {formatDate(date)}
+              {formatDate(value)}
             </div>
           )}
         </div>
@@ -64,11 +60,8 @@ export function SelectDateButtonSubMenu({
       <ContextMenuSubContent>
         <Calendar
           mode="single"
-          selected={date}
-          onSelect={(date) => {
-            setDate(date)
-            onChange(date)
-          }}
+          selected={value}
+          onSelect={onChange}
           disabled={disabledDays}
         />
       </ContextMenuSubContent>

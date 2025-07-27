@@ -1,6 +1,3 @@
-import { useRequest } from 'ahooks'
-import { useState } from 'react'
-import type { Task } from 'shared'
 import FilterSideBar from '@/components/FilterSideBar'
 import TaskDetail from '@/components/task/TaskDetail'
 import TaskList from '@/components/task/TaskList'
@@ -9,92 +6,30 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
-import { createTask, getAllTasks } from '../../api/tasks'
+import { useTaskContext } from '@/context/TaskContext'
 import QuickCreateTaskInput from '../../components/task/QuickCreateTaskInput'
 
 export default function Home() {
-  const {
-    data: tasks,
-    mutate: updateTasks,
-    run: refetchTasks,
-  } = useRequest(getAllTasks)
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
-
-  const { run: doCreateTask } = useRequest(createTask, {
-    manual: true,
-    onSuccess: (data) => {
-      if (!data) return
-
-      updateTasks((oldTaskList) => {
-        if (oldTaskList) {
-          return [data, ...oldTaskList]
-        }
-        return [data]
-      })
-    },
-  })
-
-  function handleCreateTask(title: string) {
-    const sort = tasks?.length ?? 0
-    doCreateTask({
-      title,
-      sort,
-    })
-  }
-
-  function handleTaskDeleted(taskId: number) {
-    updateTasks((oldTaskList) => {
-      if (oldTaskList) {
-        return oldTaskList.filter((task) => task.id !== taskId)
-      }
-      return oldTaskList
-    })
-  }
-
-  function handleTaskSelected(taskId: number) {
-    setSelectedTask(tasks?.find((task) => task.id === taskId) ?? null)
-  }
-
-  function handleTaskUpdated(task: Task) {
-    updateTasks((oldTaskList) => {
-      return oldTaskList?.map((t) => (t.id === task.id ? task : t))
-    })
-
-    if (selectedTask?.id === task.id) {
-      setSelectedTask(task)
-    }
-  }
-
-  function handleFilterChange(filter: 'all' | 'today') {
-    refetchTasks({
-      filterDate: filter === 'today' ? new Date() : undefined,
-    })
-  }
+  const { selectedTask, createTask, setFilter } = useTaskContext()
 
   return (
     <ResizablePanelGroup direction="horizontal" className="w-full">
       <ResizablePanel defaultSize={12} maxSize={18}>
-        <FilterSideBar onFilterChange={handleFilterChange} />
+        <FilterSideBar onFilterChange={setFilter} />
       </ResizablePanel>
       <ResizableHandle></ResizableHandle>
       <ResizablePanel defaultSize={16} maxSize={20}>
         <div className="flex h-screen flex-1">
           <div className="flex flex-col gap-2 w-sm p-4">
-            <QuickCreateTaskInput onSubmit={handleCreateTask} />
-            <TaskList
-              tasks={tasks || []}
-              selectedTaskId={selectedTask?.id}
-              onTaskSelected={handleTaskSelected}
-              onTaskDeleted={handleTaskDeleted}
-              onTaskUpdated={handleTaskUpdated}
-            />
+            <QuickCreateTaskInput onSubmit={createTask} />
+            <TaskList />
           </div>
         </div>
       </ResizablePanel>
       <ResizableHandle></ResizableHandle>
       <ResizablePanel>
         {selectedTask ? (
-          <TaskDetail task={selectedTask} onTaskUpdated={handleTaskUpdated} />
+          <TaskDetail />
         ) : (
           <div className="h-full flex items-center justify-center text-muted-foreground">
             <div className="text-center">

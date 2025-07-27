@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
 
 interface FilterSideBarProps {
-  onFilterChange: (filter: 'all' | 'today') => void
+  onFilterChange: (filter: { period: 'all' | 'today' }) => void
 }
 
 export default function FilterSideBar({ onFilterChange }: FilterSideBarProps) {
@@ -12,7 +12,7 @@ export default function FilterSideBar({ onFilterChange }: FilterSideBarProps) {
 
   function handleFilterChange(filter: 'all' | 'today') {
     setFilter(filter)
-    onFilterChange(filter)
+    onFilterChange({ period: filter })
   }
 
   return (

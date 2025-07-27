@@ -1,60 +1,43 @@
-import { useRequest } from 'ahooks'
 import { CalendarArrowDown, CalendarArrowUp } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { type Task, TaskStatus } from 'shared'
-import { updateTask } from '@/api/tasks'
+import { TaskStatus } from 'shared'
+import { useTaskContext } from '@/context/TaskContext'
 import { cn } from '@/lib/utils'
 import DatePicker from '../DatePicker'
 import { Checkbox } from '../ui/checkbox'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 
-interface TaskDetailProps {
-  task: Task
-  onTaskUpdated: (task: Task) => void
-}
-
-export default function TaskDetail({ task, onTaskUpdated }: TaskDetailProps) {
-  const [taskItem, setTaskItem] = useState(task)
-
-  useEffect(() => {
-    setTaskItem(task)
-  }, [task])
-
-  const { run: doUpdateTask } = useRequest(updateTask, {
-    manual: true,
-    debounceWait: 500,
-  })
+export default function TaskDetail() {
+  const { updateTask, selectedTask } = useTaskContext()
 
   function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const newTaskItem = { ...taskItem, title: e.target.value }
-    setTaskItem(newTaskItem)
-    doUpdateTask(newTaskItem)
-    onTaskUpdated(newTaskItem)
+    if (!selectedTask) return
+    const newTaskItem = { ...selectedTask, title: e.target.value }
+    updateTask(newTaskItem)
   }
 
   function handleContentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const newTaskItem = { ...taskItem, content: e.target.value }
-    setTaskItem(newTaskItem)
-    doUpdateTask(newTaskItem)
-    onTaskUpdated(newTaskItem)
+    if (!selectedTask) return
+    const newTaskItem = { ...selectedTask, content: e.target.value }
+    updateTask(newTaskItem)
   }
 
   function handleStatusChange(checked: boolean) {
+    if (!selectedTask) return
     const newTaskItem = {
-      ...taskItem,
+      ...selectedTask,
       status: checked ? TaskStatus.COMPLETED : TaskStatus.IN_PROGRESS,
     }
-    setTaskItem(newTaskItem)
-    doUpdateTask(newTaskItem)
-    onTaskUpdated(newTaskItem)
+    updateTask(newTaskItem)
   }
+
+  if (!selectedTask) return null
 
   return (
     <div className="flex flex-col p-4 h-full">
       <div className="flex items-center">
         <Checkbox
-          checked={taskItem.status === TaskStatus.COMPLETED}
+          checked={selectedTask.status === TaskStatus.COMPLETED}
           onCheckedChange={handleStatusChange}
           className="size-5 cursor-pointer"
         />
@@ -67,7 +50,7 @@ export default function TaskDetail({ task, onTaskUpdated }: TaskDetailProps) {
             'font-bold',
             'text-xl!',
           )}
-          value={taskItem.title}
+          value={selectedTask.title}
           onChange={handleTitleChange}
         />
       </div>
@@ -76,24 +59,22 @@ export default function TaskDetail({ task, onTaskUpdated }: TaskDetailProps) {
         <div className="flex items-center gap-2">
           <DatePicker
             icon={<CalendarArrowUp className="w-4 h-4" />}
-            date={taskItem.startDate}
+            date={selectedTask.startDate}
             setDate={(date) => {
-              setTaskItem({ ...taskItem, startDate: date })
-              doUpdateTask({ ...taskItem, startDate: date })
+              updateTask({ ...selectedTask, startDate: date })
             }}
-            endThreshold={taskItem.endDate}
+            endThreshold={selectedTask.endDate}
           />
         </div>
         <div>-</div>
         <div className="flex items-center gap-2">
           <DatePicker
             icon={<CalendarArrowDown className="w-4 h-4" />}
-            date={taskItem.endDate}
+            date={selectedTask.endDate}
             setDate={(date) => {
-              setTaskItem({ ...taskItem, endDate: date })
-              doUpdateTask({ ...taskItem, endDate: date })
+              updateTask({ ...selectedTask, endDate: date })
             }}
-            startThreshold={taskItem.startDate}
+            startThreshold={selectedTask.startDate}
           />
         </div>
       </div>
@@ -110,7 +91,7 @@ export default function TaskDetail({ task, onTaskUpdated }: TaskDetailProps) {
           'mt-2',
           'text-lg!',
         )}
-        value={taskItem.content}
+        value={selectedTask.content}
         onChange={handleContentChange}
       />
     </div>
